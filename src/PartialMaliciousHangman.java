@@ -2,23 +2,37 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * Partially Malicious Hangman gameplay. Computer will try to give no letters for as long as possible, before eventually
+ * running out of options and switching to standard.
+ *
+ * @author Joseph Brooksbank
+ * @version 6/3/2018
+ * <p>
+ * To whoever grades this: Have a good summer!
+ */
 public class PartialMaliciousHangman extends Hangman {
 
-    /** A set of all possible words that the computer might have selected in a malicious sense */
-    private Set<String> possibleWords;
-    /** A boolean to control whether the computer is playing honestly or not yet (if it has run out of words to remove) */
+    /* A set of all possible words that the computer might have selected in a malicious sense */
+    // Possible words is now defined in abstract Hangman, so "cheating" mode works... is simple to change back, let me know if I should
+    /**
+     * A boolean to control whether the computer is playing honestly or not yet (if it has run out of words to remove)
+     */
     private boolean isHonest;
-    /** Once the computer is playing honestly, this is the word that it uses */
+    /**
+     * Once the computer is playing honestly, this is the word that it uses
+     */
     private String secretWord;
 
 
     /**
      * Constructor for Partially Malicious Hangman game
-     * @param dictionary    The set of all potential words for this game
-     * @param length        The length of the word that the user selects
-     * @param guesses       The number of guesses the user allows themselves
+     *
+     * @param dictionary The set of all potential words for this game
+     * @param length     The length of the word that the user selects
+     * @param guesses    The number of guesses the user allows themselves
      */
-    public PartialMaliciousHangman(Set<String> dictionary, int length, int guesses){
+    PartialMaliciousHangman(Set<String> dictionary, int length, int guesses) {
         // Creating a hangman object with the correct length and number of guesses
         super(length, guesses);
 
@@ -29,7 +43,7 @@ public class PartialMaliciousHangman extends Hangman {
 
         // Creating the set of potential words for this game, the only limitation at the start is length
         possibleWords = new HashSet<>();
-        for (String aWord : dictionary){
+        for (String aWord : dictionary) {
             if (aWord.length() == length)
                 possibleWords.add(aWord);
         }
@@ -42,10 +56,9 @@ public class PartialMaliciousHangman extends Hangman {
     @Override
     protected boolean makeNewGuess(char c) {
         // if the game is playing honestly, make an honest guess
-        if (isHonest){
+        if (isHonest) {
             return honestGuess(c);
-        }
-        else {
+        } else {
             // checking if there are still words that are able to be removed
             boolean stillWords = false;
             for (String aWord : possibleWords) {
@@ -69,15 +82,13 @@ public class PartialMaliciousHangman extends Hangman {
                 }
 
                 // Can't remove while iterating over a list, so remove all after
-                for (String aWord : removeList){
-                    System.out.println("DEBUGGING: removing " + aWord);
+                for (String aWord : removeList) {
                     possibleWords.remove(aWord);
                 }
-                System.out.println("DEBUGGING: remaining set: " + possibleWords);
                 return false;
 
-            // Otherwise, there are no words remaining that the computer can "fool" the user with. Has to play
-            // honestly now.
+                // Otherwise, there are no words remaining that the computer can "fool" the user with. Has to play
+                // honestly now.
             } else {
                 // Grabbing a random value from the set for the new secret word
                 secretWord = getRandomFromPossibleWords();
@@ -91,17 +102,18 @@ public class PartialMaliciousHangman extends Hangman {
 
     /**
      * Private method to make a guess in an honest fashion, similar to standard hangman
-     * @param c     The character to guess
-     * @return      Whether or not the character was in the word
+     *
+     * @param c The character to guess
+     * @return Whether or not the character was in the word
      */
-    private boolean honestGuess(char c){
+    private boolean honestGuess(char c) {
         // Using an index based iteration to handle all positions of the character in the word
         int index = secretWord.indexOf(c);
         // If the character exists, check for all possible locations in the word
-        if (secretWord.indexOf(c) != -1){
-            while (index >= 0){
+        if (secretWord.indexOf(c) != -1) {
+            while (index >= 0) {
                 this.state[index] = c;
-                index = secretWord.indexOf(c, index +1);
+                index = secretWord.indexOf(c, index + 1);
             }
             return true;
         }
@@ -110,9 +122,10 @@ public class PartialMaliciousHangman extends Hangman {
 
     /**
      * Private method to get a "random" value from a set.
-     * @return  The random value from the set
+     *
+     * @return The random value from the set
      */
-    private String getRandomFromPossibleWords(){
+    private String getRandomFromPossibleWords() {
         Random rand = new Random();
         String ret = "";
         // Getting random "index" of value
@@ -123,7 +136,6 @@ public class PartialMaliciousHangman extends Hangman {
             if (i == indexOfWord) {
                 // getting value at that "index"
                 ret = aWord;
-                System.out.println("DEBUGGING: Secret word is " + aWord);
                 break;
             }
             i++;

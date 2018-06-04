@@ -1,8 +1,7 @@
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.HashSet;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -11,12 +10,18 @@ import java.util.Set;
  *
  * @author Joseph Brooksbank
  * @version 6/3/2018
- *
+ * <p>
  * To whoever grades this: Have a good summer!
  */
 public class Driver {
 
+    // Enabling this gives the possible words for each step, so the player can see how the computer changes their answer
+    // and also makes it easier to play.
+    private final static boolean IS_CHEATING = true;
+
     public static void main(String[] args) {
+
+        CheatStrings chout = new CheatStrings(IS_CHEATING);
 
         // Set of all "words" in the dictionary -- I personally would choose a different dictionary, that contains
         // only real english words for easier and more logical play.
@@ -24,32 +29,41 @@ public class Driver {
 
         try {
             Scanner fileIn = new Scanner(new FileInputStream("dictionary.txt"));
-            while (fileIn.hasNext()){
+            while (fileIn.hasNext()) {
                 dictionary.add(fileIn.next());
             }
             fileIn.close();
-        } catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.out.println("Dictionary not found, can't continue without...");
             System.exit(1);
         }
 
         Scanner stdin = new Scanner(System.in);
         boolean cont = true;
-        while(cont){
+        while (cont) {
 
 
-            System.out.println("How evil should the computer be? \n 1: Not at all \n 2: Slightly \n 3: Computer should win");
-            int evilness = stdin.nextInt();
+            int evilness;
+            int wordLength;
+            int guesses;
+            try {
+                System.out.println("How evil should the computer be? \n 1: Not at all \n 2: Slightly \n 3: Computer should win");
+                evilness = stdin.nextInt();
 
-            System.out.println("Length of word?");
-            int wordLength = stdin.nextInt();
+                System.out.println("Length of word?");
+                wordLength = stdin.nextInt();
 
-            System.out.println("Number of guesses?");
-            int guesses = stdin.nextInt();
+                System.out.println("Number of guesses?");
+                guesses = stdin.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Unknown input, starting over");
+                stdin.nextLine();
+                continue;
+            }
 
             Hangman hangman = new StandardHangman(dictionary, wordLength, guesses);
 
-            switch (evilness){
+            switch (evilness) {
                 case 1:
                     System.out.println("Selected normal play. Have fun!");
                     hangman = new StandardHangman(dictionary, wordLength, guesses);
@@ -63,12 +77,18 @@ public class Driver {
                     hangman = new MaliciousHangman(dictionary, wordLength, guesses);
             }
 
-            System.out.println("DEBUGGING: secret word: " + hangman.getWord());
 
             while (!hangman.isGameOver()) {
+                // This is disable-able at the top, cheating strings
+                if (hangman instanceof StandardHangman) {
+                    chout.out("Secret word: " + hangman.getWord());
+                } else {
+                    chout.out("Possible words: " + hangman.possibleWords);
+                }
+
                 System.out.println("Guess a letter:");
                 String guess = stdin.next();
-                if(hangman.makeGuess(guess.charAt(0))){
+                if (hangman.makeGuess(guess.charAt(0))) {
                     System.out.println("Correct guess!");
                 } else {
                     System.out.println("Incorrect guess!");
@@ -84,7 +104,7 @@ public class Driver {
             System.out.println("The word might have been: " + hangman.getWord());
             System.out.println("Do you want to play again? (yes/no)");
 
-            switch(stdin.next()){
+            switch (stdin.next()) {
                 case "yes":
                     cont = true;
                     break;

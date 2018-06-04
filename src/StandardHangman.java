@@ -1,25 +1,37 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
-public class StandardHangman extends Hangman{
+/**
+ * Standard hangman gameplay. Computer chooses one word and sticks with it for the entire game
+ *
+ * @author Joseph Brooksbank
+ * @version 6/3/2018
+ * <p>
+ * To whoever grades this: Have a good summer!
+ */
+public class StandardHangman extends Hangman {
 
-    String secretWord;
+    private String secretWord;
 
     /**
      * Constructor for "Standard" hangman gameplay
-     * @param dictionary    The set of all possible words to play with -- note, I don't personally agree with this list of
-     *                      "words", because it contains a fair number of strings which don't actually contain vowels
-     *                      and appear to simply be combinations of random letters
-     * @param length        The length of the word, as chosen by the user
-     * @param guesses       The number of guesses, as chosen by the user
+     *
+     * @param dictionary The set of all possible words to play with -- note, I don't personally agree with this list of
+     *                   "words", because it contains a fair number of strings which don't actually contain vowels
+     *                   and appear to simply be combinations of random letters
+     * @param length     The length of the word, as chosen by the user
+     * @param guesses    The number of guesses, as chosen by the user
      */
-    StandardHangman(Set<String> dictionary, int length, int guesses){
+    StandardHangman(Set<String> dictionary, int length, int guesses) {
         // Setting up the basic hangman structure
         super(length, guesses);
 
         // A list of all possible words of the supplied length. Using list > set because of the easy of randomization
         List<String> possibleWords = new ArrayList<>();
-        for (String aWord : dictionary){
-            if (aWord.length() == length){
+        for (String aWord : dictionary) {
+            if (aWord.length() == length) {
                 possibleWords.add(aWord);
             }
         }
@@ -38,11 +50,11 @@ public class StandardHangman extends Hangman{
         // Using an index based iteration to handle every position of the character in the word
         int index = secretWord.indexOf(c);
         // if the character exists in the word, check for every index
-        if (secretWord.indexOf(c) != -1){
-            while (index >= 0){
+        if (secretWord.indexOf(c) != -1) {
+            while (index >= 0) {
                 this.state[index] = c;
                 // check the rest of the word after the index found
-                index = secretWord.indexOf(c, index +1);
+                index = secretWord.indexOf(c, index + 1);
             }
             return true;
         }

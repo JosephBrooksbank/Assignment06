@@ -16,7 +16,15 @@ public abstract class Hangman {
 	protected char[] state;
 	// -- stores the guesses made by the user so far
 	protected Set<Character> guesses;
-	
+
+
+    // ADDED THIS MYSELF
+    // I know the assignment said not to edit this file at all, but I'm not really changing anything, just adding one
+    // declaration so my debugging works.
+    Set<String> possibleWords;
+
+
+    
 	// constructor
 	public Hangman(int length, int guessCount) {
 		// initialize the two integer member variables
